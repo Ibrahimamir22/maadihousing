@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Cabinet Grotesk and General Sans from Fontshare */
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&f[]=general-sans@400,500,600&display=swap');
+
+:root {
+  --font-cabinet: 'Cabinet Grotesk', system-ui, sans-serif;
+  --font-general-sans: 'General Sans', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-brand-midnight text-brand-cream antialiased;
+    font-family: var(--font-general-sans);
+  }
+  
+  ::selection {
+    @apply bg-brand-copper/30 text-brand-cream;
+  }
+}
+
+@layer components {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-gold via-brand-copper to-brand-gold;
+  }
+  
+  .glass-panel {
+    @apply backdrop-blur-xl bg-brand-charcoal/40 border border-brand-slate/30;
+  }
+  
+  .input-field {
+    @apply w-full px-5 py-4 bg-brand-dark/80 border border-brand-slate/40 
+           rounded-xl text-brand-cream placeholder:text-brand-slate
+           focus:outline-none focus:border-brand-copper/60 focus:ring-2 
+           focus:ring-brand-copper/20 transition-all duration-300;
+  }
+  
+  .btn-primary {
+    @apply px-8 py-4 bg-gradient-to-r from-brand-copper to-brand-gold 
+           text-brand-midnight font-display font-semibold rounded-xl
+           hover:shadow-lg hover:shadow-brand-copper/25 
+           active:scale-[0.98] transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  /* Film grain overlay effect */
+  .grain-overlay::before {
+    content: '';
+    @apply fixed inset-0 pointer-events-none z-50 opacity-[0.03];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    animation: grain 8s steps(10) infinite;
+  }
+  
+  /* Geometric pattern background */
+  .geo-pattern {
+    background-image: 
+      linear-gradient(45deg, transparent 48%, rgba(193, 127, 89, 0.03) 49%, rgba(193, 127, 89, 0.03) 51%, transparent 52%),
+      linear-gradient(-45deg, transparent 48%, rgba(193, 127, 89, 0.03) 49%, rgba(193, 127, 89, 0.03) 51%, transparent 52%);
+    background-size: 60px 60px;
+  }
+  
+  /* Radial glow effect */
+  .radial-glow {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(193, 127, 89, 0.12), transparent);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-brand-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-slate rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-copper/50;
+}
+

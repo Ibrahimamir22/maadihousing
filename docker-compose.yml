@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: maadihousing-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: maadihousing
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Django Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: maadihousing-backend
+    restart: unless-stopped
+    environment:
+      - DEBUG=False
+      - DATABASE_URL=postgres
+      - POSTGRES_DB=maadihousing
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-change-this-in-production}
+      - ALLOWED_HOSTS=localhost,127.0.0.1,backend,maadihousing.com,www.maadihousing.com
+      - CORS_ALLOWED_ORIGINS=http://localhost,http://localhost:3000,https://maadihousing.com,https://www.maadihousing.com
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - static_volume:/app/staticfiles
+    expose:
+      - "8000"
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: maadihousing-frontend
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost/api
+    expose:
+      - "3000"
+
+  # Nginx Reverse Proxy
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: maadihousing-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    volumes:
+      - static_volume:/app/staticfiles:ro
+
+volumes:
+  postgres_data:
+  static_volume:
+
