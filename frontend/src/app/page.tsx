@@ -1,12 +1,11 @@
 import { Logo } from '@/components/logo'
 import { EmailForm } from '@/components/email-form'
 import { CountdownTimer } from '@/components/countdown-timer'
-import { SocialLinks } from '@/components/social-links'
 import { BackgroundElements } from '@/components/background-elements'
 
 export default function ComingSoonPage() {
   // Set your launch date here
-  const launchDate = new Date('2025-03-01T00:00:00')
+  const launchDate = new Date('2026-03-01T00:00:00')
 
   return (
     <main className="relative min-h-screen overflow-hidden">
@@ -59,22 +58,23 @@ export default function ComingSoonPage() {
           <EmailForm />
         </div>
 
-        {/* Social links */}
-        <div 
-          className="animate-fade-in"
-          style={{ animationDelay: '0.8s', animationFillMode: 'backwards' }}
-        >
-          <SocialLinks />
-        </div>
-
         {/* Footer */}
-        <footer 
+        <footer
           className="absolute bottom-6 left-0 right-0 text-center animate-fade-in"
           style={{ animationDelay: '1s', animationFillMode: 'backwards' }}
         >
-          <p className="text-brand-slate text-sm">
-            © {new Date().getFullYear()} Maadi Housing. All rights reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+            <a
+              href="mailto:info@maadihousing.com"
+              className="text-brand-copper hover:text-brand-gold transition-colors duration-300 text-sm"
+            >
+              info@maadihousing.com
+            </a>
+            <span className="text-brand-slate text-xs hidden sm:block">•</span>
+            <p className="text-brand-slate text-sm">
+              © {new Date().getFullYear()} Maadi Housing. All rights reserved.
+            </p>
+          </div>
         </footer>
       </div>
     </main>

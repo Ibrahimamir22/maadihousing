@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         username = 'maadihousing'
-        email = 'ibrahimamiir22@gmail.com'
+        email = 'info@maadihousing.com'
         password = 'maadihousing'
 
         if User.objects.filter(username=username).exists():

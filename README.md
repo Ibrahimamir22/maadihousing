@@ -42,6 +42,80 @@ maadihousing/
 - Docker & Docker Compose installed
 - Git
 
+## 🚀 Production Deployment
+
+### Server Setup (One-time)
+
+```bash
+# On your server (run as root/sudo)
+wget https://raw.githubusercontent.com/Ibrahimamir22/maadihousing/main/server-setup.sh
+chmod +x server-setup.sh
+./server-setup.sh
+```
+
+### Deploy Application
+
+```bash
+# Upload project to server
+cd /var/www/maadihousing
+git clone https://github.com/Ibrahimamir22/maadihousing.git .
+
+# Or upload via SCP from local machine:
+# scp -r /path/to/local/maadihousing/* root@server-ip:/var/www/maadihousing/
+
+# Deploy
+chmod +x deploy.sh
+./deploy.sh
+```
+
+### Access Your Site
+
+- **Frontend:** `http://your-server-ip`
+- **Admin:** `http://your-server-ip/admin/`
+- **API:** `http://your-server-ip/api/`
+
+**Admin Credentials:**
+- Username: `maadihousing`
+- Password: `maadihousing`
+- Email: `info@maadihousing.com`
+
+## 🔧 Management Commands
+
+```bash
+# View logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Update application
+git pull && docker-compose up -d --build
+
+# Backup database
+docker-compose exec db pg_dump -U postgres maadihousing > backup_$(date +%Y%m%d).sql
+
+# Access Django shell
+docker-compose exec backend python manage.py shell
+```
+
+## 🛠️ Environment Configuration
+
+The `.env` file contains all necessary configuration. Key variables:
+
+```env
+# Database
+POSTGRES_PASSWORD=your-secure-password
+
+# Django
+DJANGO_SECRET_KEY=your-unique-secret-key
+DEBUG=False
+
+# Domains (update for production)
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+NEXT_PUBLIC_API_URL=https://yourdomain.com/api
+```
+
 ### Development Setup
 
 1. **Clone the repository**
