@@ -1,9 +1,9 @@
-version: '3.8'
+version: '3.9'
 
 services:
   # PostgreSQL Database
   db:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     container_name: maadihousing-db
     restart: unless-stopped
     environment:

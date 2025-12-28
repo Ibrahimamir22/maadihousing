@@ -1,5 +1,5 @@
 # Python Django Backend Dockerfile
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1

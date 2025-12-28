@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 # Development override configuration
 # Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up

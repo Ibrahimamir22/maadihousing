@@ -4,11 +4,13 @@ A beautiful, modern coming soon landing page for **maadihousing.com** with email
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
-- **Backend**: Django 5.0, Django REST Framework
-- **Database**: PostgreSQL
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS
+- **Backend**: Django 5.1, Django REST Framework
+- **Database**: PostgreSQL 17
 - **Server**: Nginx (reverse proxy)
 - **Containerization**: Docker & Docker Compose
+- **Node.js**: 22 LTS
+- **Python**: 3.13
 
 ## Project Structure
 
