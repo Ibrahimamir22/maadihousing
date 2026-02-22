@@ -22,23 +22,33 @@ export function EmailForm() {
     setErrorMessage('')
 
     try {
-      // Use relative URL so it always hits same origin (avoids CORS/api-base misconfig)
       const response = await fetch('/api/subscribe/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
 
       if (response.ok) {
         setStatus('success')
         setEmail('')
-      } else {
-        const data = await response.json()
-        setStatus('error')
-        setErrorMessage(data.error || 'Something went wrong. Please try again.')
+        return
       }
+
+      // Handle error response - server may return HTML (502/504) or JSON
+      let msg = 'Something went wrong. Please try again.'
+      const ct = response.headers.get('content-type')
+      if (ct?.includes('application/json')) {
+        try {
+          const data = await response.json()
+          msg = data.error || msg
+        } catch {
+          msg = `Server error (${response.status}). Please try again.`
+        }
+      } else {
+        msg = `Server error (${response.status}). Please try again.`
+      }
+      setStatus('error')
+      setErrorMessage(msg)
     } catch {
       setStatus('error')
       setErrorMessage('Unable to connect. Please try again later.')
