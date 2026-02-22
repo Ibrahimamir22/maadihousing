@@ -54,16 +54,15 @@ services:
     expose:
       - "3000"
 
-  # Nginx Reverse Proxy - standalone on 80/443 for maadihousing.com
+  # Nginx Reverse Proxy - internal only; Traefik owns 80/443 and routes maadihousing.com here
   nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
     container_name: maadihousing-nginx
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    expose:
+      - "80"
     depends_on:
       - frontend
       - backend
