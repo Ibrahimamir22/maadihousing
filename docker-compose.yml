@@ -54,7 +54,7 @@ services:
     expose:
       - "3000"
 
-  # Nginx Reverse Proxy
+  # Nginx Reverse Proxy (8080/8443 to avoid conflict with here-home on 80/443)
   nginx:
     build:
       context: ./nginx
@@ -62,8 +62,8 @@ services:
     container_name: maadihousing-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     depends_on:
       - frontend
       - backend
