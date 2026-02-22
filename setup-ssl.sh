@@ -24,34 +24,12 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Check if certbot is installed
-if ! command -v certbot &> /dev/null; then
-    echo -e "${BLUE}📦 Installing certbot...${NC}"
-    apt update
-    apt install -y certbot python3-certbot-nginx
-fi
-
-# Create directories for certbot
-echo -e "${BLUE}📁 Creating certbot directories...${NC}"
-mkdir -p /var/www/certbot
-mkdir -p /etc/letsencrypt
-chmod -R 755 /var/www/certbot
-chmod -R 755 /etc/letsencrypt
-
-# Make sure nginx is running (needed for verification)
-echo -e "${BLUE}🐳 Ensuring Docker containers are running...${NC}"
+# Make sure maadihousing is running (nginx serves .well-known for certbot)
+echo -e "${BLUE}🐳 Ensuring Maadi Housing is running...${NC}"
 cd /var/www/maadihousing
+docker-compose up -d
 
-# Use temporary nginx config for initial certificate generation
-if [ -f "nginx/nginx-ssl-init.conf" ]; then
-    echo -e "${BLUE}📝 Using temporary nginx config for certificate generation...${NC}"
-    cp nginx/nginx.conf nginx/nginx.conf.backup
-    cp nginx/nginx-ssl-init.conf nginx/nginx.conf
-fi
-
-docker-compose up -d nginx
-
-# Wait for nginx to be ready
+# Wait for nginx
 sleep 5
 
 # Check if domain is pointing to this server
@@ -60,29 +38,24 @@ echo -e "${YELLOW}   Run: dig ${DOMAIN} +short${NC}"
 echo ""
 read -p "Press Enter to continue after verifying DNS..."
 
-# Get SSL certificate
+# Get SSL certificate (uses same volumes as nginx so certs are shared)
 echo -e "${BLUE}🔐 Requesting SSL certificate from Let's Encrypt...${NC}"
-certbot certonly \
-    --webroot \
-    --webroot-path=/var/www/certbot \
-    --email ${EMAIL} \
-    --agree-tos \
-    --no-eff-email \
-    --force-renewal \
-    -d ${DOMAIN} \
-    -d www.${DOMAIN}
+docker run --rm \
+  -v maadihousing_certbot-www:/var/www/certbot \
+  -v maadihousing_certbot-conf:/etc/letsencrypt \
+  certbot/certbot certonly \
+  --webroot -w /var/www/certbot \
+  --email ${EMAIL} \
+  --agree-tos \
+  --no-eff-email \
+  -d ${DOMAIN} \
+  -d www.${DOMAIN}
 
 # Set up auto-renewal
 echo -e "${BLUE}🔄 Setting up auto-renewal...${NC}"
-cat > /etc/cron.d/certbot-renew << EOF
-0 0 * * * certbot renew --quiet --deploy-hook "cd /var/www/maadihousing && docker-compose restart nginx"
+cat > /etc/cron.d/certbot-maadihousing << EOF
+0 0 * * * root docker run --rm -v maadihousing_certbot-conf:/etc/letsencrypt -v maadihousing_certbot-www:/var/www/certbot certbot/certbot renew --quiet --deploy-hook "cd /var/www/maadihousing && docker-compose restart nginx"
 EOF
-
-# Restore full nginx config with SSL
-if [ -f "nginx/nginx.conf.backup" ]; then
-    echo -e "${BLUE}📝 Restoring full nginx config with SSL...${NC}"
-    mv nginx/nginx.conf.backup nginx/nginx.conf
-fi
 
 # Restart nginx to load SSL certificates
 echo -e "${BLUE}🔄 Restarting nginx with SSL configuration...${NC}"

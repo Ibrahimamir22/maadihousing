@@ -5,12 +5,6 @@
 
 set -e
 
-echo "Ensure nginx uses 8080 (not 80) to avoid conflict with here-home..."
-if grep -q '"80:80"' docker-compose.yml 2>/dev/null || grep -q '80:80' docker-compose.yml 2>/dev/null; then
-    echo "Fixing docker-compose.yml: changing 80:80 -> 8080:80 and 443:443 -> 8443:443"
-    sed -i.bak 's/"80:80"/"8080:80"/g; s/"443:443"/"8443:443"/g; s/80:80/8080:80/g; s/443:443/8443:443/g' docker-compose.yml
-fi
-
 echo "Stopping and removing Maadi Housing containers (data is in volumes, safe)..."
 docker-compose down
 
