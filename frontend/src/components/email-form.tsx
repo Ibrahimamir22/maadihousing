@@ -22,8 +22,8 @@ export function EmailForm() {
     setErrorMessage('')
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/api/subscribe/`, {
+      // Use relative URL so it always hits same origin (avoids CORS/api-base misconfig)
+      const response = await fetch('/api/subscribe/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
